@@ -9,6 +9,8 @@
 */
 #include<iostream>
 using namespace std;
+enum TraversalOrder{PREORDER=1,INORDER=2,POSTORDER=3};
+
 template<class E>
 class BinaryTree{
 	private:
@@ -43,12 +45,14 @@ class BinaryTree{
 		};
 		Node *rootNode;
 		void preorderRecursive(Node *);
+		void traverseTreeRecursively(Node *root,TraversalOrder);
 	public:
 		BinaryTree(){
 			rootNode=NULL;
 		}
 		void add(E *element);
 		void traversePreorder();
+		void traverseTree(TraversalOrder);
 };
 template<class E>
 void BinaryTree<E>::add(E* element){				//function to insert node in the bSTree. Non Recursive
@@ -81,6 +85,29 @@ void BinaryTree<E>::add(E* element){				//function to insert node in the bSTree.
 		}while(!nodeInserted);
 	}
 }
+
+template<class E>
+void BinaryTree<E>::traverseTree(TraversalOrder order){
+	traverseTreeRecursively(rootNode,order);
+	cout<<endl;
+}
+
+template<class E>
+void BinaryTree<E>::traverseTreeRecursively(Node *root,TraversalOrder order){
+	if(root){
+		if(order==PREORDER){
+			cout<<*(root->getElement())<<" ";
+		}
+		traverseTreeRecursively(root->getLeftChild(),order);
+		if(order==INORDER){
+			cout<<*(root->getElement())<<" ";
+		}
+		traverseTreeRecursively(root->getRightChild(),order);
+		if(order==POSTORDER){
+			cout<<*(root->getElement())<<" ";
+		}
+	}
+}
 template<class E>
 void BinaryTree<E>::preorderRecursive(Node *root){
 	if(root){
@@ -93,6 +120,7 @@ void BinaryTree<E>::preorderRecursive(Node *root){
 template<class E>
 void BinaryTree<E>::traversePreorder(){
 	preorderRecursive(rootNode);
+	cout<<endl;
 }
 
 class Integer{
@@ -112,7 +140,7 @@ class Integer{
 ostream & operator<<(ostream &out,Integer integer){
 	out<<integer.data<<" ";
 	return out;
-}
+	}
 int main(){
 	int choice;
 	BinaryTree<Integer> iBST;
@@ -128,6 +156,9 @@ int main(){
 			}
 			case 2:{
 				iBST.traversePreorder();
+				iBST.traverseTree(PREORDER);
+				iBST.traverseTree(INORDER);
+				iBST.traverseTree(POSTORDER);
 				break;
 			}
 			case 3:break;
