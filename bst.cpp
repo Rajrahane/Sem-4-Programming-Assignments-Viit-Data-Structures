@@ -46,6 +46,7 @@ class BinaryTree{
 		Node *rootNode;
 		void preorderRecursive(Node *);
 		void traverseTreeRecursively(Node *root,TraversalOrder);
+		int heightOfNode(Node *root);
 	public:
 		BinaryTree(){
 			rootNode=NULL;
@@ -53,6 +54,8 @@ class BinaryTree{
 		void add(E *element);
 		void traversePreorder();
 		void traverseTree(TraversalOrder);
+		int height();
+		E* min();
 };
 template<class E>
 void BinaryTree<E>::add(E* element){				//function to insert node in the bSTree. Non Recursive
@@ -88,8 +91,10 @@ void BinaryTree<E>::add(E* element){				//function to insert node in the bSTree.
 
 template<class E>
 void BinaryTree<E>::traverseTree(TraversalOrder order){
-	traverseTreeRecursively(rootNode,order);
-	cout<<endl;
+	if(rootNode){
+		traverseTreeRecursively(rootNode,order);
+		cout<<endl;
+	}
 }
 
 template<class E>
@@ -119,8 +124,34 @@ void BinaryTree<E>::preorderRecursive(Node *root){
 
 template<class E>
 void BinaryTree<E>::traversePreorder(){
-	preorderRecursive(rootNode);
-	cout<<endl;
+	if(rootNode){
+		preorderRecursive(rootNode);
+		cout<<endl;
+	}
+}
+
+template<class T>
+int BinaryTree<T>::heightOfNode(Node *root){
+	if(!root)
+		return 0;
+	int lHeight=heightOfNode(root->getLeftChild()),rHeight=heightOfNode(root->getRightChild());
+	return 1+(lHeight>rHeight?lHeight:rHeight);
+}
+
+template<class T>
+T* BinaryTree<T>::min(){
+	if(!rootNode)
+		return NULL;
+	Node* leftNode=rootNode;
+	while(leftNode->getLeftChild()){
+		leftNode=leftNode->getLeftChild();
+	}
+	return leftNode->getElement();
+}
+
+template<class T>
+int BinaryTree<T>::height(){
+	return heightOfNode(rootNode);
 }
 
 class Integer{
@@ -136,6 +167,9 @@ class Integer{
 			return data>secondInteger.data;
 		}
 		friend ostream& operator<<(ostream &out,const Integer);
+		~Integer(){
+			cout<<"Destructor called\n";
+		}
 };
 ostream & operator<<(ostream &out,Integer integer){
 	out<<integer.data<<" ";
@@ -150,8 +184,10 @@ int main(){
 			case 1:{
 				int num;
 				cin>>num;
-				Integer *nn=new Integer(num);				
+				Integer *nn=new Integer(num);	
+				cout<<&(*nn);			
 				iBST.add(nn);
+				cout<<"Here\n";
 				break;
 			}
 			case 2:{
@@ -161,9 +197,21 @@ int main(){
 				iBST.traverseTree(POSTORDER);
 				break;
 			}
-			case 3:break;
+			case 3:{
+				cout<<iBST.height()<<endl;
+				break;
+			}
+			case 4:{
+				Integer *nn=iBST.min();
+				if(nn)
+					cout<<*nn<<endl;
+				else 
+					cout<<"Empty Tree\n";		
+			}
+			case 5:break;
+			default:cout<<"Invalid Input";
 		}
-	}while(choice!=3);
+	}while(choice!=5);
 	/*float *nn=new float;*nn=(100.34);
 	float *n2=new float;*n2=(99.43);
 	iBST.add(nn);iBST.add(n2);*/
