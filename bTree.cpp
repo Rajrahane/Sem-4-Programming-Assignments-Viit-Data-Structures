@@ -154,7 +154,7 @@ int main(){
 			BinaryTree::preorderTraversal(bTree);cout<<endl;
 			BinaryTree::postorderTraversal(bTree);cout<<endl;
 			BinaryTree::nonRecursivePreorderTraversal(bTree);cout<<endl;
-			BinaryTree::nonRecursivePostorderTraversal(bTree);cout<<endl;\
+			BinaryTree::nonRecursivePostorderTraversal(bTree);cout<<endl;
 		bTree=BinaryTree::deleteBinaryTree(bTree);
 	}
 	return 0;
