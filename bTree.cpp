@@ -85,7 +85,29 @@ class BinaryTree{
 		static BinaryTree* deleteBinaryTree(BinaryTree *rootNode);
 };
 void BinaryTree::nonRecursivePostorderTraversal(BinaryTree* rootNode){
-
+	if(rootNode){
+		stack<BinaryTree*> nodeStack;
+		BinaryTree* tempRoot=rootNode;
+		do{
+			while(tempRoot){
+				if(tempRoot->getRightChild()){
+					nodeStack.push(tempRoot->getRightChild());
+				}
+				nodeStack.push(tempRoot);
+				tempRoot=tempRoot->getLeftChild();
+			}
+			tempRoot=nodeStack.top();nodeStack.pop();
+			BinaryTree* rightChild=tempRoot->getRightChild();
+			if(rightChild && !nodeStack.empty() && rightChild==nodeStack.top()){
+				nodeStack.pop();
+				nodeStack.push(tempRoot);
+				tempRoot=rightChild;
+			}else{
+				cout<<tempRoot->getData();
+				tempRoot=NULL;
+			}
+		}while(!nodeStack.empty());
+	}
 }
 void BinaryTree::nonRecursivePreorderTraversal(BinaryTree *rootNode){
 	stack<BinaryTree *> nodeStack;
@@ -132,6 +154,7 @@ int main(){
 			BinaryTree::preorderTraversal(bTree);cout<<endl;
 			BinaryTree::postorderTraversal(bTree);cout<<endl;
 			BinaryTree::nonRecursivePreorderTraversal(bTree);cout<<endl;
+			BinaryTree::nonRecursivePostorderTraversal(bTree);cout<<endl;\
 		bTree=BinaryTree::deleteBinaryTree(bTree);
 	}
 	return 0;
