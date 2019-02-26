@@ -168,7 +168,7 @@ class Integer{
 		}
 		friend ostream& operator<<(ostream &out,const Integer);
 		~Integer(){
-			cout<<"Destructor called\n";
+			//cout<<"Destructor called\n";
 		}
 };
 ostream & operator<<(ostream &out,Integer integer){
@@ -185,9 +185,9 @@ int main(){
 				int num;
 				cin>>num;
 				Integer *nn=new Integer(num);	
-				cout<<&(*nn);			
+				//cout<<&(*nn);			
 				iBST.add(nn);
-				cout<<"Here\n";
+				//cout<<"Here\n";
 				break;
 			}
 			case 2:{
