@@ -47,6 +47,7 @@ class BinaryTree{
 		void preorderRecursive(Node *);
 		void traverseTreeRecursively(Node *root,TraversalOrder);
 		int heightOfNode(Node *root);
+		void mirrorBSTUtil(Node *tempRoot);
 	public:
 		BinaryTree(){
 			rootNode=NULL;
@@ -56,7 +57,22 @@ class BinaryTree{
 		void traverseTree(TraversalOrder);
 		int height();
 		E* min();
+		void mirrorBST();
 };
+template<class E>
+void BinaryTree<E>::mirrorBSTUtil(Node *tempRoot){
+	if(tempRoot){
+		Node *tempNode=tempRoot->getRightChild();
+		tempRoot->setRightChild(tempRoot->getLeftChild());
+		tempRoot->setLeftChild(tempNode);
+		mirrorBSTUtil(tempRoot->getRightChild());
+		mirrorBSTUtil(tempRoot->getLeftChild());
+	}
+}
+template<class E>
+void BinaryTree<E>::mirrorBST(){
+	mirrorBSTUtil(rootNode);
+}
 template<class E>
 void BinaryTree<E>::add(E* element){				//function to insert node in the bSTree. Non Recursive
 	Node *newNode=new Node(NULL,element,NULL);		//create a New Node	
@@ -215,6 +231,8 @@ int main(){
 	/*float *nn=new float;*nn=(100.34);
 	float *n2=new float;*n2=(99.43);
 	iBST.add(nn);iBST.add(n2);*/
+	iBST.traversePreorder();
+	iBST.mirrorBST();
 	iBST.traversePreorder();
 	return 0;
 }
