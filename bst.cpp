@@ -3,7 +3,8 @@
 */
 /*
 *	Generic Implementation of Binary Search Tree
-*	implements functions - add(),traversePreorder()-Recursive
+*	implements functions - add(),traversePreorder()-Recursive and All Recursive Traversal using enums
+* 	implements min()-returns minimum element in BST, mirrorBST()-swaps the children of each node, height()- returns height of BST
 *	Permits classes with overloaded << extraction, == equals and > greater than operators.
 *	Permits dynamically allocated basic datatypes.
 */
