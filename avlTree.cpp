@@ -55,18 +55,33 @@ class AVLTree{
 		Node *leftRotate(Node*);
 		Node *rightRotate(Node*);
 		Node* insert(E*,Node*);
+		Node* minValueNode(Node*);
+		Node* removeNodeUtil(E*,Node*);
 		int getBalance(Node*);
 		void preorderRecursive(Node *);
 	public:
 		AVLTree(){
 			rootNode=NULL;
 		}
-		void add(E* element);		
+		void add(E* element);	
+		void remove(E*);	
 		E* find(E);
 		void traversePreorder();
 };
 template<class E>
 E* AVLTree<E>::find(E element){
+	Node* currentNode=rootNode;
+	while(currentNode){
+		E* currentElement=currentNode->getElement();
+		if(*(currentElement)==element){
+			return currentElement;
+		}
+		if(*(currentElement)<element){
+			currentNode=currentNode->getRightChild();
+		}else{
+			currentNode=currentNode->getLeftChild();
+		}
+	}
 	return NULL;
 }
 template<class E>
@@ -107,6 +122,16 @@ template<class T>
 int AVLTree<T>::getBalance(Node* node){
 	if(node==NULL)return 0;
 	return height(node->getLeftChild())-height(node->getRightChild());
+}
+
+template<class E>
+typename AVLTree<E>::Node* AVLTree<E>::minValueNode(Node* node){
+	if(node){
+		while(node->getLeftChild()){
+			node=node->getLeftChild();
+		}
+	}
+	return node;
 }
 
 template<class E>
@@ -151,6 +176,63 @@ typename AVLTree<E>::Node* AVLTree<E>::insert(E*element, Node* rootNode){
 }
 
 template<class E>
+typename AVLTree<E>::Node* AVLTree<E>::removeNodeUtil(E* element,Node *rootNode){
+	if(!rootNode){
+		return rootNode;
+	}
+	if(*element<*(rootNode->getElement())){		//less than
+		rootNode->setLeftChild(removeNodeUtil(element,rootNode->getLeftChild()));
+	}else if(*element==*(rootNode->getElement())){	//equals
+		Node * left=rootNode->getLeftChild(),*right=rootNode->getRightChild();
+		if(!left || !right){	//one or no child
+			Node *temp=left?left:right;
+			if(!temp){		//no child
+				temp=rootNode;
+				rootNode=NULL;
+			}else{
+				Node* swap=rootNode;
+				rootNode=temp;
+				temp=swap;
+			}
+			delete temp;
+		}else{
+			Node* temp=minValueNode(right);
+			rootNode->setElement(temp->getElement());
+			rootNode->setRightChild(removeNodeUtil(temp->getElement(),rootNode->getRightChild()));
+		}
+	}else{						//greater
+		rootNode->setRightChild(removeNodeUtil(element,rootNode->getRightChild()));
+	}
+	if(!rootNode)
+		return rootNode;
+	rootNode->setHeight(1+max(height(rootNode->getLeftChild()),height(rootNode->getRightChild())));
+	int balance=getBalance(rootNode);
+	if(balance>1){		//left case
+		int leftChildBalance=getBalance(rootNode->getLeftChild());
+		if(leftChildBalance>=0){	//left left case;
+			return rightRotate(rootNode);
+		}else{				//left right case;
+			rootNode->setLeftChild(leftRotate(rootNode->getLeftChild()));
+			return rightRotate(rootNode);
+		}
+	}else if(balance<-1){	//right case
+		int rightChildBalance=getBalance(rootNode->getRightChild());
+		if(rightChildBalance<=0){	//right right case
+			return leftRotate(rootNode);
+		}else{
+			rootNode->setRightChild(rightRotate(rootNode->getRightChild()));
+			return leftRotate(rootNode);
+		}
+	}
+	return rootNode;		//unchanged root
+}
+
+template<class E>
+void AVLTree<E>::remove(E* element){
+	rootNode=removeNodeUtil(element,rootNode);
+}
+
+template<class E>
 void AVLTree<E>::add(E* element){	
 	rootNode=insert(element,rootNode);
 }
@@ -178,6 +260,9 @@ class Entry{
 			this->name=name;
 			this->meaning=meaning;
 		}
+		void setMeaning(string meaning){
+			this->meaning=meaning;
+		}
 		string getName(){
 			return name;
 		}
@@ -186,10 +271,14 @@ class Entry{
 		}
 		friend ostream& operator<<(ostream&,const Entry&);
 		bool operator<(Entry e);
+		bool operator==(Entry e);
 };
+bool Entry::operator==(Entry entry){
+	return name.compare(entry.name)==0;
+}
 bool Entry::operator<(Entry entry){
 	int value=name.compare(entry.name);
-	cout<<name<<" "<<entry.name<<" "<<value<<endl;
+	//cout<<name<<" "<<entry.name<<" "<<value<<endl;
 	if(value<0)
 		return true;
 	return false;
@@ -201,6 +290,7 @@ ostream& operator<<(ostream& out,Entry& entry){
 
 int main(){
 	int choice;
+	char changeDescription;
 	AVLTree <Entry> avlTree;
 	do{
 		cin>>choice;
@@ -216,13 +306,54 @@ int main(){
 				break;
 			}case 3:{
 				string name;
+				cout<<"Enter Name : ";
 				cin>>name;
-				Entry e(name,NULL);
+				Entry e(name,"empty");
 				Entry * entry=avlTree.find(e);
+				if(entry!=NULL){
+					cout<<*entry<<endl;
+					cout<<"Change Description?(Y,y) : ";
+					cin>>changeDescription;
+					if(changeDescription=='y' || changeDescription=='Y'){
+						cout<<"Enter new Description : ";
+						string meaning;
+						cin>>meaning;
+						(*entry).setMeaning(meaning);
+						cout<<"Changes Saved\n";
+						cout<<*entry<<endl;	
+					}else{
+						cout<<"Changes Aborted\n";
+					}
+				}else{
+					cout<<"Name not found\n";
+				}
 				break;
-			}case 4:break;
+			}case 4:{
+				string name;
+				cout<<"Enter Name : ";
+				cin>>name;
+				Entry e(name,"empty");
+				Entry * entry=avlTree.find(e);
+				if(entry){
+					cout<<*entry<<endl;
+					cout<<"Confirm Delete ? (Y,y) : ";
+					char option;
+					cin>>option;
+					if(option=='y' || option=='Y'){
+						avlTree.remove(entry);
+						cout<<"Entry removed";
+						cout<<*entry<<endl;
+						delete entry;
+					}else{
+						cout<<"Deletion aborted";
+					}
+				}else{
+					cout<<"Name not found\n";
+				}
+				break;
+			}case 5:break;
 		}
-	}while(choice!=4);
+	}while(choice!=5);
 	return 0;
 }
 /*	UI 1.0
