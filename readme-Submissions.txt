@@ -10,6 +10,7 @@ Assignments 3 & 4 bTree.cpp Implementation of Binary Search Tree
 Assignment 5 dfs.cpp Depth First Search
 Assignment 6 code_BFS_Graphs.cpp along with 2 testCase Files. Breadth First Search
 Assignment 8 linearProbing.cpp Linear Probing without chaining.
+Assignment 10 avlTree.cpp AVL Tree CRUD operations
 
 Extra Assignments 
 1) huffmanAlgo.cpp Huffman Algorithm Implementation
